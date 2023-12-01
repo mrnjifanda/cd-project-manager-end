@@ -2,6 +2,7 @@ package com.njifanda.pm.Services;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +32,12 @@ public class UserService {
 
 		String email = principal.getName();
 		return this.findByEmail(email);
+	}
+	
+	public User findById(Long id) {
+
+		Optional<User> user = this.userRepository.findById(id);
+		return user.isEmpty() ? null : (User) user.get();
 	}
 	
     public User findByEmail(String email) {

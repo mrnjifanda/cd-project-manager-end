@@ -39,7 +39,7 @@ public class Project {
     @DateTimeFormat(iso=ISO.DATE)
     private Date dueDate;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private User user;
   

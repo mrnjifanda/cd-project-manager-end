@@ -30,7 +30,7 @@ public class Team {
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="project_id")
     private Project project;
-	
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "users_teams", 
@@ -47,6 +47,10 @@ public class Team {
     private Date updatedAt;
     
     public Team() {}
+
+    public Team(Project project) {
+    	this.project = project;
+    }
     
     @PrePersist
     protected void onCreate() {
