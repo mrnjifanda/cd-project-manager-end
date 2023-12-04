@@ -40,7 +40,7 @@
 								<td>${ team.project.title }</td>
 								<td>${ team.project.user.firstName }</td>
 								<td>${ team.project.dueDate }</td>
-								<td><a href="/projects/join/${ team.id }" class="btn btn-link">Join Team</a></td>
+								<td><a href="/teams/join/${ team.id }" class="btn btn-link">Join Team</a></td>
 							</tr>
 						</c:forEach>
 					</tbody>

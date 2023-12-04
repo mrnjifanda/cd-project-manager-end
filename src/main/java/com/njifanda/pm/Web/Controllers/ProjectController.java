@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.njifanda.pm.Models.Project;
+import com.njifanda.pm.Models.Task;
 import com.njifanda.pm.Models.User;
 import com.njifanda.pm.Services.ProjectService;
 import com.njifanda.pm.Services.UserService;
@@ -74,6 +75,23 @@ public class ProjectController {
 		return "projects/project";
 	}
 	
+	@GetMapping("/{id}/tasks")
+	public String tasks(
+			@PathVariable(name="id", required=true) Long id,
+			@ModelAttribute("task") Task task,
+			Model model
+	) {
+
+		Project project = this.projectService.findById(id);
+		if (project == null) {
+
+			return "redirect:/dashboard?error=true&message=Project with id: " + id + " not found";
+		}
+
+		model.addAttribute("project", project);
+		return "projects/tasks";
+	}
+	
 	@PostMapping("/new")
 	public String createPost(
 			@Valid @ModelAttribute("project") Project project,
@@ -89,6 +107,24 @@ public class ProjectController {
 
     	User connectedUser = this.userService.getAuthUser(principal);
     	this.projectService.create(project, connectedUser);
+		return "redirect:/dashboard";
+	}
+	
+	@PostMapping("/remove/{id}")
+	public String deletePost(
+			@PathVariable(name="id", required=true) Long id,
+    		Principal principal
+	) {
+
+		Project project = this.projectService.findById(id);
+		User connectedUser = this.userService.getAuthUser(principal);
+		User projectCreator = project.getUser();
+		if (project == null || projectCreator.getId() != connectedUser.getId()) {
+
+			return "redirect:/dashboard";
+		}
+
+    	this.projectService.remove(project);
 		return "redirect:/dashboard";
 	}
 	
@@ -110,22 +146,24 @@ public class ProjectController {
 		return "redirect:/dashboard";
 	}
 	
-	@PostMapping("/remove/{id}")
-	public String deletePost(
+	@PostMapping("/{id}/tasks")
+	public String taskPost(
 			@PathVariable(name="id", required=true) Long id,
-    		Principal principal
+			@Valid @ModelAttribute("task") Task task,
+			BindingResult result,
+			Model model,
+			Principal principal
 	) {
 
-		Project project = this.projectService.findById(id);
-		User connectedUser = this.userService.getAuthUser(principal);
-		User projectCreator = project.getUser();
-		if (project == null || projectCreator.getId() != connectedUser.getId()) {
+		String returnUrl = "redirect:/projects/" + id + "/tasks";
+    	if (result.hasErrors()) {
+  
+            return returnUrl.concat("?error=true");
+        }
 
-			return "redirect:/dashboard";
-		}
-
-    	this.projectService.remove(project);
-		return "redirect:/dashboard";
+    	User user = this.userService.getAuthUser(principal);
+    	this.projectService.addTask(id, task, user);    	
+		return returnUrl;
 	}
 
 }

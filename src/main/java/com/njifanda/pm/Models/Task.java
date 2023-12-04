@@ -1,21 +1,17 @@
 package com.njifanda.pm.Models;
+
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -23,55 +19,37 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name="projects")
-public class Project {
-
+@Table(name="tasks")
+public class Task {
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @NotEmpty(message="Title must be provided")
-    @Size(min=3, message="Title must at leasr 3 characters")
-    private String title;
-    
-    @NotEmpty(message="Description must be provided")
     @Size(min=3, message="Description must at leasr 3 characters")
+    @Column(name="TEXT")
     private String description;
-
-    @DateTimeFormat(iso=ISO.DATE)
-    private Date dueDate;
-    
+	
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private User user;
-  
-	@OneToOne(mappedBy="project", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    private Team team;
-	
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
-    private List<Task> tasks;
-
-    public List<Task> getTasks() {
-		return tasks;
-	}
-
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
-	}
-
-	@Column(updatable=false)
+    
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "project_id")
+    private Project project;
+    
+    @Column(updatable=false)
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createdAt;
 
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date updatedAt;
-
-	public Project() {}
+    
+	public Task() {}
 	
-	public Project(String title, String description, Date dueDate) {
-		this.title = title;
+	public Task(String description) {
 		this.description = description;
-		this.dueDate = dueDate;
 	}
 	
     @PrePersist
@@ -92,14 +70,6 @@ public class Project {
 		this.id = id;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -108,20 +78,20 @@ public class Project {
 		this.description = description;
 	}
 
-	public Date getDueDate() {
-		return dueDate;
-	}
-
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
-
 	public User getUser() {
 		return user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	public Date getCreatedAt() {
@@ -138,13 +108,5 @@ public class Project {
 
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
-	}
-	
-	public Team getTeam() {
-		return team;
-	}
-
-	public void setTeam(Team team) {
-		this.team = team;
 	}
 }

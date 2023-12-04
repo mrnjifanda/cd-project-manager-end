@@ -30,7 +30,8 @@ public class WebSecurityConfig {
 		http.authorizeHttpRequests(auth -> auth
 				.requestMatchers(
 						new MvcRequestMatcher(introspector, "/dashboard"),
-						new MvcRequestMatcher(introspector, "/projects/***")
+						new MvcRequestMatcher(introspector, "/projects/***"),
+						new MvcRequestMatcher(introspector, "/teams/***")
 				)
 				.authenticated().anyRequest().permitAll())
 				.formLogin(form ->form.loginPage("/").usernameParameter("email").defaultSuccessUrl("/dashboard").permitAll())

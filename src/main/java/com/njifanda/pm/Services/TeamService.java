@@ -2,6 +2,7 @@ package com.njifanda.pm.Services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,5 +53,54 @@ public class TeamService {
 		
 		return trueTeams;
 	}
+	
+	public String join(Long team_id, User user) {
+		
+		// Check if team exits
+		Optional<Team> findTeam = this.teamRepository.findById(team_id);
+		if (!findTeam.isPresent()) {
+			return "Team with id: " + team_id + " not found";
+		}
 
+		// Check if user is not creator of project
+		Team team = findTeam.get();
+		if (team.getProject().getUser().getId() == user.getId()) {
+			return "This not avalaible the join this team";
+		}
+		
+		// Check if user is not already exist in the team
+		if (team.getUsers().contains(user)) {
+			return "This user already join this team";
+		}
+		
+		// Add user in the team
+		team.addUserInTeam(user);
+		this.teamRepository.save(team);
+		return null;
+	}
+	
+	public String leave(Long team_id, User user) {
+		
+		// Check if team exits
+		Optional<Team> findTeam = this.teamRepository.findById(team_id);
+		if (!findTeam.isPresent()) {
+			return "Team with id: " + team_id + " not found";
+		}
+
+		// Check if user is not creator of project
+		Team team = findTeam.get();
+		if (team.getProject().getUser().getId() == user.getId()) {
+			return "This not avalaible the join this team";
+		}
+		
+		// Check if user is not already exist in the team
+		if (!team.getUsers().contains(user)) {
+			return "This user no join this team";
+		}
+		
+		// Add user in the team
+		team.removeUserInTeam(user);
+		this.teamRepository.save(team);
+		return null;
+	}
 }

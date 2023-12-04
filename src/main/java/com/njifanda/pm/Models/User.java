@@ -74,6 +74,9 @@ public class User {
 		 joinColumns = @JoinColumn(name = "user_id"), 
 		 inverseJoinColumns = @JoinColumn(name = "role_id"))
 	 private List<Role> roles;
+	 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Task> tasks;
 
 	@Column(updatable=false)
     @DateTimeFormat(pattern="yyyy-MM-dd")
@@ -105,7 +108,15 @@ public class User {
 		this.confirm = confirm;
 	}
 
-    public Long getId() {
+    public List<Task> getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
+
+	public Long getId() {
 		return id;
 	}
 

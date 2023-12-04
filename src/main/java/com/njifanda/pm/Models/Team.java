@@ -101,4 +101,12 @@ public class Team {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+	
+	public void addUserInTeam(User user) {
+		this.users.add(user);
+	}
+	
+	public void removeUserInTeam(User user) {
+		this.users.remove(user);
+	}
 }

@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.njifanda.pm.Models.Project;
+import com.njifanda.pm.Models.Task;
 import com.njifanda.pm.Models.Team;
 import com.njifanda.pm.Models.User;
 import com.njifanda.pm.Repositories.ProjectRepository;
+import com.njifanda.pm.Repositories.TaskService;
 
 @Service
 public class ProjectService {
@@ -19,6 +21,9 @@ public class ProjectService {
 	
 	@Autowired
 	private TeamService teamService;
+	
+	@Autowired
+	private TaskService taskService;
 	
 	public List<Project> findAll() {
 		return this.projectRepository.findAll();
@@ -52,5 +57,15 @@ public class ProjectService {
 	
 	public void remove(Project project) {
 		this.projectRepository.delete(project);
+	}
+	
+	public Task addTask(Long project_id, Task task, User user) {
+		
+		Project project = this.findById(project_id);
+		if (project == null) {
+			return null;
+		}
+	
+		return this.taskService.create(project, task, user);
 	}
 }
